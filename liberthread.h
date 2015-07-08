@@ -90,15 +90,15 @@ struct liberthread
 typedef struct liberthread lt;
 
 #define LT_DELAY(lt, time)\
-	do {
-		((lt)->t) = millis();
-		LT_WAIT_FOR(lt, millis()-((lt)->t) >= time);
+	do {\
+		((lt)->t) = millis();\
+		LT_WAIT_FOR(lt, millis()-((lt)->t) >= time);\
 	} while(0)
 
 #define LT_MICRODELAY(lt, time)\
-	do {
-		((lt)->t) = micros();
-		LT_WAIT_FOR(lt, millis()-((lt)->t) >= time);
+	do {\
+		((lt)->t) = micros();\
+		LT_WAIT_FOR(lt, millis()-((lt)->t) >= time);\
 	} while(0)
 
 #endif
