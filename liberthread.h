@@ -29,12 +29,13 @@
  * 
  */
 
+#ifndef __LT_H__
 #define __LT_H__
 
-#define LT_WAITING 0
-#define LT_DEAD 1
+#define LT_WAITING ((void*) 0)
+#define LT_DEAD ((void*) 1)
 
-typedef int location_t;
+typedef void *location_t;
 
 struct liberthread
 {
@@ -43,18 +44,33 @@ struct liberthread
 
 typedef struct liberthread lt;
 
-#define LT_INIT(lt) ((lt)->lc) = 0
+#define LT_INIT(lt) ((lt)->lc) = LT_WAITING
 
 #define LT_EXIT(lt)\
-	do{\
+	do {\
 		((lt)->lc)= LT_DEAD;\
 		return;\
 	} while(0)
 
 #define LT_BEGIN(lt)\
-	switch((lt)->lc) {\
-		case 0:
+	if((lt)->lc==LT_WAITING) {
 
-#define LT_END(lt) }
+#define LT_END(lt)\
+	}\
+	else if((lt)->lc != LT_DEAD) {\
+		goto *((lt)->lc);\
+	}
 
+#define LT_CONCAT(s1, s2)\
+	s1##s2
 
+#define LT_WAIT_FOR(lt, condition)\
+	LT_CONCAT(lt,__LINE__):\
+	do {\
+		if(!(condition)) {\
+			(lt)->lc = &&LT_CONCAT(lt,__LINE__);\
+			return;\
+		}\
+	} while(0)
+
+#endif
