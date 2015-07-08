@@ -1,7 +1,8 @@
 
 all:test
 
-test:test.c liberthread.h
+test:examples/test.c liberthread.h
+	cp examples/test.c .
 	$(CC) -o test test.c
 
 .PHONY:clean
