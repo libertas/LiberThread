@@ -69,8 +69,8 @@ typedef struct liberthread lt;
 #define LT_CONCAT(s1, s2) LT_CONCAT2(s1, s2)
 
 #define LT_WAIT_FOR(lt, condition)\
-	LT_CONCAT(LINE, __LINE__):\
 	do {\
+		LT_CONCAT(LINE, __LINE__):\
 		if(!(condition)) {\
 			(lt)->lc = &&LT_CONCAT(LINE, __LINE__);\
 			return;\
