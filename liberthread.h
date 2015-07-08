@@ -37,12 +37,16 @@
 
 typedef void *location_t;
 
+#ifndef USE_ARDUINO
+
 struct liberthread
 {
 	location_t lc;  // The location where the thread stopped last time
 };
 
 typedef struct liberthread lt;
+
+#endif
 
 #define LT_INIT(lt) ((lt)->lc) = LT_WAITING
 
@@ -71,6 +75,30 @@ typedef struct liberthread lt;
 			(lt)->lc = &&LT_CONCAT(LINE, __LINE__);\
 			return;\
 		}\
+	} while(0)
+
+#endif
+
+#ifdef USE_ARDUINO
+
+struct liberthread
+{
+	location_t lc;  // The location where the thread stopped last time
+	unsigned long t;
+};
+
+typedef struct liberthread lt;
+
+#define LT_DELAY(lt, time)\
+	do {
+		((lt)->t) = millis();
+		LT_WAIT_FOR(lt, millis()-((lt)->t) >= time);
+	} while(0)
+
+#define LT_MICRODELAY(lt, time)\
+	do {
+		((lt)->t) = micros();
+		LT_WAIT_FOR(lt, millis()-((lt)->t) >= time);
 	} while(0)
 
 #endif
